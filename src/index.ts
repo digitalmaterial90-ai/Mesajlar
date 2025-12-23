@@ -14,6 +14,10 @@ app.use((req, res, next) => {
 // Initialize WebSocket Service
 new WebSocketService(server);
 
+import { MessageModel } from './models/message';
+import { UserModel } from './models/user';
+import { GroupModel } from './models/group';
+
 // Initialize DB Tables (only in development with local DynamoDB)
 if (process.env.NODE_ENV !== 'production') {
     Promise.all([
