@@ -18,8 +18,10 @@ import { MessageModel } from './models/message';
 import { UserModel } from './models/user';
 import { GroupModel } from './models/group';
 
-// Initialize DB Tables (only in development with local DynamoDB)
-if (process.env.NODE_ENV !== 'production') {
+// Initialize DB Tables (only in development or if explicitly enabled)
+const shouldInitDB = process.env.NODE_ENV === 'development' || process.env.DB_INIT === 'true';
+
+if (shouldInitDB) {
     Promise.all([
         MessageModel.createTable(),
         UserModel.createTable(),
@@ -30,7 +32,7 @@ if (process.env.NODE_ENV !== 'production') {
         console.log("DB initialization skipped or failed:", err.message);
     });
 } else {
-    console.log("Production mode: Skipping local DynamoDB initialization");
+    console.log(`Production/Cloud mode (NODE_ENV=${process.env.NODE_ENV}): Skipping local DynamoDB initialization`);
 }
 
 import authRoutes from './routes/auth';
