@@ -14,18 +14,20 @@ app.use((req, res, next) => {
 // Initialize WebSocket Service
 new WebSocketService(server);
 
-// Initialize DB Tables
-import { MessageModel } from './models/message';
-import { UserModel } from './models/user';
-import { GroupModel } from './models/group';
-
-Promise.all([
-    MessageModel.createTable(),
-    UserModel.createTable(),
-    GroupModel.createTable()
-]).then(() => {
-    console.log("DB Tables Initialized");
-});
+// Initialize DB Tables (only in development with local DynamoDB)
+if (process.env.NODE_ENV !== 'production') {
+    Promise.all([
+        MessageModel.createTable(),
+        UserModel.createTable(),
+        GroupModel.createTable()
+    ]).then(() => {
+        console.log("DB Tables Initialized");
+    }).catch(err => {
+        console.log("DB initialization skipped or failed:", err.message);
+    });
+} else {
+    console.log("Production mode: Skipping local DynamoDB initialization");
+}
 
 import authRoutes from './routes/auth';
 import groupRoutes from './routes/groups';
